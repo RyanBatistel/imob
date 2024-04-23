@@ -1,0 +1,28 @@
+{
+  
+  "name": "aula1",
+  "version": "1.0.0",
+  "description": "projeto desenvolvido em sala de aula na disciplina desenvolvimento web back end ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "biblioteca",
+    "livros",
+    "library",
+    "books"
+  ],
+  "author": "Ryan Batistel",
+  "license": "ISC",
+  "dependencies": {
+    "consign": "^0.1.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
