@@ -18,13 +18,14 @@ module.exports = app => {
     });
 
     // Inserir um novo cliente com login
-    app.post('/cliente', function(req, res) {
-        let reg = req.body.cliente;
-        let login = req.body.login;
+    app.post('/cliente', (req, res) => {
+        let reg = req.body; //.cliente;
+        //let login = req.body.login;
 
+        console.log(reg);
         // Insere o login na tabela 'login'
         db.run("INSERT INTO login (email, senha, perfil) VALUES (?, ?, ?)",
-            [login.email, login.senha, login.perfil],
+            [reg.email, reg.senha, reg.perfil],
             function(erro) {
                 if (erro)
                     return res.status(500).send("Erro ao inserir login: " + erro.message);
@@ -79,26 +80,49 @@ module.exports = app => {
         let clienteId = req.params.id;
         let cliente = req.body.cliente; 
         let login = req.body.login;
+        let mensagem = '';
 
-        console.log("Dados do cliente:", cliente);
+        console.log("Dados do cliente");
+        console.log(clienteId);
+        console.log(cliente.nome);
         console.log("Dados do login:", login);
 
         // Atualiza o cliente
-        db.run("UPDATE cliente SET nome = ?, telefone = ?, dt_nascimento = ?, genero = ? WHERE id_cliente = ?",
-            [cliente.nome, cliente.telefone, cliente.dt_nascimento, cliente.genero, clienteId],
+        db.run(`UPDATE cliente 
+                   SET nome = ?, 
+                       telefone = ?, 
+                       dt_nascimento = ?,
+                       genero = ?
+                 WHERE id_cliente = ?`,
+            [cliente.nome, 
+             cliente.telefone,
+             cliente.dt_nascimento, 
+             cliente.genero, 
+             clienteId],
             function (err) {
                 if (err)
-                    return res.status(500).send("Erro ao atualizar cliente: " + err.message);
+                    mensagem = "Erro ao atualizar cliente: " + err.message;
+            }
+        );
 
-                // Atualiza o login associado ao cliente
-                db.run("UPDATE login SET email = ?, senha = ?, perfil = ? WHERE id_login = ?",
-                    [login.email, login.senha, login.perfil, cliente.login_id_login],
+        // Atualiza o login associado ao cliente
+        db.run(`UPDATE login 
+                   SET email = ?, 
+                       senha = ?, 
+                       perfil = ?
+                 WHERE id_login = ?`,
+                    [login.email, 
+                     login.senha, 
+                     login.perfil, 
+                     clienteId],
                     function (err) {
                         if (err)
-                            return res.status(500).send("Erro ao atualizar login: " + err.message);
-
-                        return res.status(200).send("Cliente e login atualizados com sucesso!");
+                            mensagem = "Erro ao atualizar login: " + err.message;
                     });
-            });
+
+        if (mensagem == '')
+            return res.status(200).send("Cliente e login atualizados com sucesso!")
+        else
+            return res.status(500).send(mensagem);
     });
 };
